@@ -24,7 +24,9 @@ xvfb=$!
 
 export DISPLAY=:0
 
-chromium-browser --no-sandbox --disable-gpu $@ &
+echo ${@}
+# chromium-browser --no-sandbox --disable-gpu $@ &
+chromium-browser $@ &
 chromium=$!
 
 wait $chromium
