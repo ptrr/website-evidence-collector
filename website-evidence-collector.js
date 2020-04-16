@@ -73,6 +73,7 @@ var refs_regexp = new RegExp(`^(${uri_refs_stripped.join('|')})\\b`, 'i');
 
   const browser = await puppeteer.launch({
     headless: argv.headless,
+    executablePath: "/usr/bin/xvfb-chromium",
     defaultViewport: {
       width: WindowSize.width,
       height: WindowSize.height,

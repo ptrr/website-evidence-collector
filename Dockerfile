@@ -19,7 +19,10 @@ LABEL org.label-schema.description="Website Evidence Collector running in a tiny
       org.label-schema.license="EUPL-1.2"
 
 # Installs latest Chromium (77) package.
+RUN apk add --update xvfb-run
+
 RUN apk add --no-cache \
+      --update \
       chromium~=80.0.3987 \
       nss \
       freetype \
@@ -33,11 +36,15 @@ RUN apk add --no-cache \
       bash procps drill coreutils libidn curl \
 # Toolbox for advanced interactive use of WEC in container
       parallel jq grep aha
+      ADD xvfb-chromium /usr/bin/xvfb-chromium
+      
 
 # Add user so we don't need --no-sandbox and match first linux uid 1000
 RUN addgroup --system --gid 1001 collector \
       && adduser --system --uid 1000 --ingroup collector --shell /bin/bash collector \
       && mkdir -p /home/collector/Downloads /output \
+      && echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd \
+      && echo "developer:x:${uid}:" >> /etc/group \
       && chown -R collector:collector /home/collector \
       && chown -R collector:collector /output
 

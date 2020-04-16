@@ -1,0 +1,31 @@
+#!/bin/bash
+
+export QT_X11_NO_MITSHM=1
+export _X11_NO_MITSHM=1
+export _MITSHM=0
+
+echo $chromium
+echo $xvfb
+
+_kill_procs() {
+  kill -TERM $chromium
+  wait $chromium
+  kill -TERM $xvfb
+}
+
+# Setup a trap to catch SIGTERM and relay it to child processes
+trap _kill_procs SIGTERM
+
+XVFB_WHD=${XVFB_WHD:-1280x720x16}
+
+# Start Xvfb
+Xvfb :0 -ac -screen 0 $XVFB_WHD -nolisten tcp &
+xvfb=$!
+
+export DISPLAY=:0
+
+chromium-browser --no-sandbox --disable-gpu $@ &
+chromium=$!
+
+wait $chromium
+wait $xvfb
